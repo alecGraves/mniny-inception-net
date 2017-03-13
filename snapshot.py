@@ -72,7 +72,7 @@ class SnapshotCallbackBuilder:
             os.makedirs('weights/')
 
         callback_list = [callbacks.ModelCheckpoint("weights/%s-Best.h5" % model_prefix,
-                                                   save_best_only=True, save_weights_only=False),
+                                                   save_best_only=True, save_weights_only=True),
                          callbacks.LearningRateScheduler(schedule=self._cosine_anneal_schedule),
                          SnapshotModelCheckpoint(self.T, self.M, fn_prefix='weights/%s' % model_prefix)]
 
