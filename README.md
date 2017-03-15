@@ -1,5 +1,5 @@
 # mniny-inception-net
-This is my version of inception net for mnist. It was created as part of a competition between friends. I won with the lowest categorical crossentropy. In the end, my best results were by an ensemble of the best members created while running the training function for approx. 24 hours.
+This is my version of inception net for mnist. It was created as part of a competition between friends (I won with the lowest categorical crossentropy).
 
 # Notable Results:
 Results gained after approx. 24 hours of training on a NVIDIA GTX 1060 GPU
