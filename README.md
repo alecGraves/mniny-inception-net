@@ -1,2 +1,13 @@
 # mniny-inception-net
-Inception net for mnist
+This is my version of inception net for mnist. It was created as a competition between a group of peers and myself. I won with the lowest categorical crossentropy. In the end, my best results were by an ensemble of the best members created while running the training function for approx. 24 hours.
+
+# Results:
+--------------------------------------
+
+ensemble
+
+Test loss (categorical crossentropy): 0.0100604627563
+
+error: 0.330001115799%
+
+--------------------------------------
