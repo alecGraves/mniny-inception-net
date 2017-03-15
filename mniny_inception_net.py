@@ -72,18 +72,15 @@ def dropconnect_lambda():
 
 def inception_net(_input):
     x = Reshape((28, 28, 1))(_input)
-    #x = Convolution2D(32, 3, 3, subsample=(1, 1))(x)
-    #x = Activation('relu')(x)
+
     x = Convolution2D(16, 3, 3,subsample=(2, 2))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = Convolution2D(48, 3, 3,subsample=(1, 1))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    #x = MaxPooling2D((3, 3), strides=(2,2))(x)
     x = mniny_inception_module(x, 1)
     x = mniny_inception_module(x, 2)
-    #x = MaxPooling2D((3, 3), strides=(2,2))(x)
     x = mniny_inception_module(x, 2)
     x, soft1 = mniny_inception_module(x, 3, True)
     x = mniny_inception_module(x, 3)
@@ -95,8 +92,7 @@ def inception_net(_input):
     x = AveragePooling2D((5, 5), strides=(1, 1))(x)
     x = Dropout(0.4)(x)
     x = Flatten()(x)
-    x = Dense(10)(x)
-    soft3 = Activation('softmax')(x)
+    soft3 = Dense(10, activation='softmax')(x)
     out = Merge(mode='ave', concat_axis=1)([soft1, soft2, soft3])
     return out
 
@@ -134,13 +130,12 @@ def mniny_inception_module(x, scale=1, predict=False):
         predict = Convolution2D(int(8*scale), 1, 1)(predict)
         predict = BatchNormalization()(predict)
         predict = Activation('relu')(predict)
-        predict = Dropout(0.3)(predict)
+        predict = Dropout(0.25)(predict)
         predict = Flatten()(predict)
         predict = Dense(120)(predict)
         predict = BatchNormalization()(predict)
         predict = Activation('relu')(predict)
-        predict = Dense(10)(predict)
-        predict = Activation('softmax')(predict)
+        predict = Dense(10, activation='softmax')(predict)
         return out, predict
 
     return out
@@ -227,21 +222,3 @@ def evaluate(eval_all=False):
         print('Test loss:', score[0])
         print('error:', str((1.-score[1])*100)+'%')
 
-#evaluate_ensemble(False)
-#evaluate(eval_all=False)
-#test_model()
-
-#run = 0
-#while True:
-#    train(run)
-#    run += 1
-
-
-
-
-# Performance history (notable cases):
-#Ensemble (2 fire_net, 3 conv_net):
-#Epoch 30/30
-#60000/60000 [==============================] - 33s - loss: 0.0053 - val_loss: 0.0229
-#10000/10000 [==============================] - 8s
-#Test score: 0.0229417834882
