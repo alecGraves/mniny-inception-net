@@ -3,7 +3,8 @@ This is my version of inception net for mnist. I use [keras](https://github.com/
 
 # Notable Results:
 
-Results gained after approx. 24 hours of training on a NVIDIA GTX 1060 GPU. Some of these results are without ensembling. No data augmentation is used.
+Results gained after approx. 24 hours of training on a NVIDIA GTX 1060 6GB GPU. 
+Some of these results are without ensembling. No data augmentation is used.
 
 --------------------------------------
 
