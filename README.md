@@ -50,16 +50,20 @@ while True:
 ### Ensembles
 ```
 from mniny_inception_module import evaluate_ensemble
+
 # To evaluate all models in weights folder:
 evaluate_ensemble(Best=False)
+
 # To evaluate ensemble of best models per training session:
 evaluate_ensemble()
 ```
 ### Individuals
 ```
 from mniny_inception_module import evaluate
+
 #Evaluate all models in weights directory:
 evaluate(eval_all=True)
+
 # Evaluate 'Best' models in weights directory:
 evaluate()
 ```
