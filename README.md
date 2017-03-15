@@ -2,7 +2,9 @@
 This is my version of inception net for mnist. It was created as part of a competition between friends (I won with the lowest categorical crossentropy).
 
 # Notable Results:
+
 Results gained after approx. 24 hours of training on a NVIDIA GTX 1060 GPU
+
 --------------------------------------
 
 ensemble
