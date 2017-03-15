@@ -42,6 +42,7 @@ error: 0.34%
 ## Training
 ```python
 from mniny_inception_module import train
+
 run = 0
 while True:
     train(run)
