@@ -1,7 +1,7 @@
 # mniny-inception-net
 This is my version of inception net for mnist. I use [keras](https://github.com/fchollet/keras) with [tensorflow](https://github.com/tensorflow/tensorflow) for this project. It was created as part of a competition between friends (I won with the lowest categorical crossentropy). I created this architecture after the one detailed in [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842). Major changes made include downscaling, simplifying kernel sizes, and adding Batch Normalization. I also use [this](https://github.com/titu1994/Snapshot-Ensembles) snapshot ensembles object (thanks, Somshubra Majumdar!).
 
-# Notable Results:
+# notable results:
 
 Results gained after approx. 24 hours of training on a NVIDIA GTX 1060 6GB GPU. 
 Some of these results are without ensembling. No data augmentation is used.
@@ -48,8 +48,8 @@ while True:
     train(run)
     run += 1
 ```
-## Evaluating
-### Ensembles
+## evaluation
+### ensemble
 ```python
 from mniny_inception_module import evaluate_ensemble
 
@@ -59,7 +59,7 @@ evaluate_ensemble(Best=False)
 # To evaluate ensemble of best models per training session:
 evaluate_ensemble()
 ```
-### Individuals
+### individual
 ```python
 from mniny_inception_module import evaluate
 
