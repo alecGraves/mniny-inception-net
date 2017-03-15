@@ -1,5 +1,5 @@
 # mniny-inception-net
-This is my version of inception net for mnist. I use [keras](https://github.com/fchollet/keras) with [tensorflow](https://github.com/tensorflow/tensorflow) for this project. It was created as part of a competition between friends (I won with the lowest categorical crossentropy). I created this architecture after the one detailed in [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842). Major changes made include downscaling, simplifying kernel sizes, and adding Batch Normalization. I also use the snapshot ensembles object found at https://github.com/titu1994/Snapshot-Ensembles (thanks, Somshubra Majumdar!).
+This is my version of inception net for mnist. I use [keras](https://github.com/fchollet/keras) with [tensorflow](https://github.com/tensorflow/tensorflow) for this project. It was created as part of a competition between friends (I won with the lowest categorical crossentropy). I created this architecture after the one detailed in [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842). Major changes made include downscaling, simplifying kernel sizes, and adding Batch Normalization. I also use [this](https://github.com/titu1994/Snapshot-Ensembles) snapshot ensembles object (thanks, Somshubra Majumdar!).
 
 # Notable Results:
 
