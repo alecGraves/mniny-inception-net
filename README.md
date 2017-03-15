@@ -39,16 +39,16 @@ error: 0.34%
 
 # Usage
 ## Training
-```
+```python
 from mniny_inception_module import train
 run = 0
 while True:
     train(run)
     run += 1
 ```
-## Evaluations
+## Evaluating
 ### Ensembles
-```
+```python
 from mniny_inception_module import evaluate_ensemble
 
 # To evaluate all models in weights folder:
@@ -58,7 +58,7 @@ evaluate_ensemble(Best=False)
 evaluate_ensemble()
 ```
 ### Individuals
-```
+```python
 from mniny_inception_module import evaluate
 
 #Evaluate all models in weights directory:
