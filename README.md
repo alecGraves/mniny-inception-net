@@ -1,5 +1,5 @@
 # mniny-inception-net
-This is my version of inception net for mnist. It was created as part of a competition between friends (I won with the lowest categorical crossentropy).
+This is my version of inception net for mnist. It was created as part of a competition between friends (I won with the lowest categorical crossentropy). I created this architecture using inspiration gained by [this](https://arxiv.org/abs/1409.4842) paper.
 
 # Notable Results:
 
