@@ -53,7 +53,7 @@ while True:
 ```python
 from mniny_inception_module import evaluate_ensemble
 
-# To evaluate all models in weights folder:
+# To evaluate ensemble of all models in weights folder:
 evaluate_ensemble(Best=False)
 
 # To evaluate ensemble of best models per training session:
