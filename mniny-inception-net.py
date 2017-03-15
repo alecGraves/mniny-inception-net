@@ -183,12 +183,8 @@ def evaluate_ensemble(Best=True):
         weighted_predictions += weight * prediction
     y_pred =weighted_predictions
 
-    print(type(Y_test))
-    print(type(y_pred))
     Y_test = tf.convert_to_tensor(Y_test)
     y_pred = tf.convert_to_tensor(y_pred)
-    print(type(Y_test))
-    print(type(y_pred))
 
     loss = metrics.categorical_crossentropy(Y_test, y_pred)
     acc = metrics.categorical_accuracy(Y_test, y_pred)
@@ -231,7 +227,7 @@ def evaluate(eval_all=False):
         print('Test loss:', score[0])
         print('error:', str((1.-score[1])*100)+'%')
 
-evaluate_ensemble(False)
+#evaluate_ensemble(False)
 #evaluate(eval_all=False)
 #test_model()
 
