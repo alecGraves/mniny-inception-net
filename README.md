@@ -79,4 +79,4 @@ evaluate()
 
 ### Setting up an Environment:
 1. Install [Anaconda](https://www.continuum.io/downloads)
-2. pip install tensorflow-gpu keras
+2. ```pip install tensorflow-gpu keras```
