@@ -23,6 +23,10 @@ import keras.metrics as metrics
 PATH = os.path.dirname(os.path.abspath(__file__))
 
 def train(run=0):
+    '''
+    Train several models using snapshot ensembles technique
+    weights are saved in local 'weights' folder.
+    '''
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     X_train = X_train.reshape(60000, 784)
     X_test = X_test.reshape(10000, 784)
@@ -62,6 +66,7 @@ def train(run=0):
     return score
 
 def create_model():
+    "Generate a single inception_net model"
     _input = Input((784,))
     incep1 = inception_net(_input)
     out = incep1
@@ -69,9 +74,14 @@ def create_model():
     return model
 
 def dropconnect_lambda():
+    'may want to implement dropconnect sometime'
     pass
 
 def inception_net(_input):
+    '''
+    My version of the 'inception net',
+    tailored specifically for MNIST
+    '''
     x = Reshape((28, 28, 1))(_input)
     x = Conv2D(16, (3, 3),strides=(2, 2))(x)
     x = BatchNormalization()(x)
@@ -79,13 +89,16 @@ def inception_net(_input):
     x = Conv2D(48, (3, 3),strides=(1, 1))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
+
     x = mniny_inception_module(x, 1)
     x = mniny_inception_module(x, 2)
     x = mniny_inception_module(x, 2)
     x, soft1 = mniny_inception_module(x, 3, True)
+    
     x = mniny_inception_module(x, 3)
     x = mniny_inception_module(x, 3)
     x, soft2 = mniny_inception_module(x, 4, True)
+    
     x = MaxPooling2D((3, 3), strides=(2,2))(x)
     x = mniny_inception_module(x, 4)
     x = mniny_inception_module(x, 5)
@@ -100,6 +113,9 @@ def inception_net(_input):
 def mniny_inception_module(x, scale=1, predict=False):
     '''
     x is input layer, scale is factor to scale kernel sizes by
+    
+    This is a version of the 'inception module', 
+    with Batch Norm added and minified for MNIST
     '''
     x11 = Conv2D(int(16*scale), (1, 1), padding='valid')(x)
     x11 = BatchNormalization()(x11)
@@ -131,25 +147,25 @@ def mniny_inception_module(x, scale=1, predict=False):
         predict = Conv2D(int(8*scale), (1, 1))(predict)
         predict = BatchNormalization()(predict)
         predict = Activation('relu')(predict)
-        predict = Dropout(0.3)(predict)
+        predict = Dropout(0.25)(predict)
         predict = Flatten()(predict)
         predict = Dense(120)(predict)
         predict = BatchNormalization()(predict)
         predict = Activation('relu')(predict)
-        predict = Dense(10)(predict)
-        predict = Activation('softmax')(predict)
+        predict = Dense(10, activation='softmax')(predict)
         return out, predict
 
     return out
 
 def test_model():
+    "Test to ensure model compiles successfully"
     model = create_model()
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     print("MODEL COMPILES SUCCESSFULLY")
 
 def evaluate_ensemble(Best=True):
     '''
-    loads and evaluates an ensemle from the models in the model folder.
+    creates and evaluates an ensemble from the models in the model folder.
     '''
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     X_test = X_test.reshape(10000, 784)
@@ -180,6 +196,7 @@ def evaluate_ensemble(Best=True):
         weighted_predictions += weight * prediction
     y_pred =weighted_predictions
 
+    # Right now, categorical crossentropy & accuracy require tensor objects
     Y_test = tf.convert_to_tensor(Y_test)
     y_pred = tf.convert_to_tensor(y_pred)
 
@@ -195,7 +212,7 @@ def evaluate_ensemble(Best=True):
 def evaluate(eval_all=False):
     '''
     evaluate models in the weights directory,
-    defaults to only models with 'best'
+    defaults to only models with 'Best'
     '''
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     X_test = X_test.reshape(10000, 784)
@@ -228,7 +245,7 @@ def evaluate(eval_all=False):
 #evaluate(eval_all=False)
 #test_model()
 
-run = 0
-while True:
-   train(run)
-   run += 1
+# run = 0
+# while True:
+#    train(run)
+#    run += 1
