@@ -6,13 +6,14 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.utils import np_utils
 from keras.layers import Input, merge
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda, Reshape, Merge, MaxoutDense
-from keras.layers.convolutional import Convolution2D, MaxPooling2D, Convolution3D, AveragePooling2D
+from keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda, Reshape
+from keras.layers.merge import Concatenate, Average
+from keras.layers.convolutional import Conv2D, MaxPooling2D, Convolution3D, AveragePooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model, load_model
 from keras.layers.advanced_activations import PReLU
-from keras.regularizers import l2, activity_l2
+from keras.regularizers import l2
 from keras import backend as K #enable tensorflow functions
 from keras.layers.pooling import GlobalAveragePooling2D
 from keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -44,7 +45,7 @@ def train(run=0):
     #model.fit_generator(datagen.flow(X_train, Y_train, batch_size=32),
     #                samples_per_epoch=len(X_train), nb_epoch=nb_epoch)
     model.fit(X_train, Y_train,
-              batch_size=1024, nb_epoch=nb_epoch,
+              batch_size=1024, epochs=nb_epoch,
               verbose=1,
               validation_data=(X_test, Y_test),
               callbacks=snapshot.get_callbacks('snap-model'+str(run)))
@@ -64,7 +65,7 @@ def create_model():
     _input = Input((784,))
     incep1 = inception_net(_input)
     out = incep1
-    model = Model(input=_input, output=[out])
+    model = Model(inputs=_input, outputs=[out])
     return model
 
 def dropconnect_lambda():
@@ -72,18 +73,14 @@ def dropconnect_lambda():
 
 def inception_net(_input):
     x = Reshape((28, 28, 1))(_input)
-    #x = Convolution2D(32, 3, 3, subsample=(1, 1))(x)
-    #x = Activation('relu')(x)
-    x = Convolution2D(16, 3, 3,subsample=(2, 2))(x)
+    x = Conv2D(16, (3, 3),strides=(2, 2))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = Convolution2D(48, 3, 3,subsample=(1, 1))(x)
+    x = Conv2D(48, (3, 3),strides=(1, 1))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    #x = MaxPooling2D((3, 3), strides=(2,2))(x)
     x = mniny_inception_module(x, 1)
     x = mniny_inception_module(x, 2)
-    #x = MaxPooling2D((3, 3), strides=(2,2))(x)
     x = mniny_inception_module(x, 2)
     x, soft1 = mniny_inception_module(x, 3, True)
     x = mniny_inception_module(x, 3)
@@ -97,41 +94,41 @@ def inception_net(_input):
     x = Flatten()(x)
     x = Dense(10)(x)
     soft3 = Activation('softmax')(x)
-    out = Merge(mode='ave', concat_axis=1)([soft1, soft2, soft3])
+    out = Average()([soft1, soft2, soft3])
     return out
 
 def mniny_inception_module(x, scale=1, predict=False):
     '''
     x is input layer, scale is factor to scale kernel sizes by
     '''
-    x11 = Convolution2D(int(16*scale), 1, 1, border_mode='valid')(x)
+    x11 = Conv2D(int(16*scale), (1, 1), padding='valid')(x)
     x11 = BatchNormalization()(x11)
     x11 = Activation('relu')(x11)
 
-    x33 = Convolution2D(int(24*scale), 1, 1)(x)
+    x33 = Conv2D(int(24*scale), (1, 1))(x)
     x33 = BatchNormalization()(x33)
     x33 = Activation('relu')(x33)
-    x33 = Convolution2D(int(32*scale), 3, 3, border_mode='same')(x33)
+    x33 = Conv2D(int(32*scale), (3, 3), padding='same')(x33)
     x33 = BatchNormalization()(x33)
     x33 = Activation('relu')(x33)
 
-    x55 = Convolution2D(int(4*scale), 1, 1)(x)
+    x55 = Conv2D(int(4*scale), (1, 1))(x)
     x55 = BatchNormalization()(x55)
     x55 = Activation('relu')(x55)
-    x55 = Convolution2D(int(8*scale), 5, 5, border_mode='same')(x55)
+    x55 = Conv2D(int(8*scale), (5, 5), padding='same')(x55)
     x55 = BatchNormalization()(x55)
     x55 = Activation('relu')(x55)
 
-    x33p = MaxPooling2D((3, 3), strides=(1, 1), border_mode='same')(x)
-    x33p = Convolution2D(int(8*scale), 1, 1)(x33p)
+    x33p = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(x)
+    x33p = Conv2D(int(8*scale), (1, 1))(x33p)
     x33p = BatchNormalization()(x33p)
     x33p = Activation('relu')(x33p)
 
-    out = merge([x11, x33, x55, x33p], mode='concat', concat_axis=3)
+    out = Concatenate(axis=3)([x11, x33, x55, x33p])
 
     if predict:
         predict = AveragePooling2D((5, 5), strides=(1, 1))(x)
-        predict = Convolution2D(int(8*scale), 1, 1)(predict)
+        predict = Conv2D(int(8*scale), (1, 1))(predict)
         predict = BatchNormalization()(predict)
         predict = Activation('relu')(predict)
         predict = Dropout(0.3)(predict)
@@ -231,17 +228,7 @@ def evaluate(eval_all=False):
 #evaluate(eval_all=False)
 #test_model()
 
-#run = 0
-#while True:
-#    train(run)
-#    run += 1
-
-
-
-
-# Performance history (notable cases):
-#Ensemble (2 fire_net, 3 conv_net):
-#Epoch 30/30
-#60000/60000 [==============================] - 33s - loss: 0.0053 - val_loss: 0.0229
-#10000/10000 [==============================] - 8s
-#Test score: 0.0229417834882
+run = 0
+while True:
+   train(run)
+   run += 1
